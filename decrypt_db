@@ -6,7 +6,7 @@ if [ $# -ne 2 ]; then
 fi
 
 DB_NAME=$1
-KEY=`echo -n "$DB_NAME" | grep -o '^[^.]\+' | tr -d '_\n' | md5 | cut -b 1-7`
+KEY=`basename $DB_NAME | grep -o '^[^.]\+' | tr -d '_\n' | md5 | cut -b 1-7`
 
 case "$(uname -s)" in
    Darwin)

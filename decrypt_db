@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+  echo "Usage: $0 input_file output_file"
+  exit
+fi
+
+DB_NAME=$1
+KEY=`echo -n "$DB_NAME" | grep -o '^[^.]\+' | tr -d '_\n' | md5 | cut -b 1-7`
+
+case "$(uname -s)" in
+   Darwin)
+     SQLCIPHER="./prebuilts/mac/sqlcipher"
+     export DYLD_LIBRARY_PATH=./prebuilts/mac/
+     ;;
+   Linux)
+     SQLCIPHER="./prebuilts/linux/sqlcipher"
+     export LD_LIBRARY_PATH=./prebuilts/linux/
+     ;;
+   *)
+     echo 'unsupported OS'
+     exit
+     ;;
+esac
+
+$SQLCIPHER $DB_NAME << EOF
+  PRAGMA key='$KEY';
+  PRAGMA cipher_use_hmac = off;
+  ATTACH DATABASE "$2" AS db KEY "";
+  SELECT sqlcipher_export("db");
+  DETACH DATABASE db;
+EOF

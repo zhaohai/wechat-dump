@@ -6,14 +6,15 @@ if [ $# -ne 2 ]; then
 fi
 
 DB_NAME=$1
-KEY=`basename $DB_NAME | grep -o '^[^.]\+' | tr -d '_\n' | md5 | cut -b 1-7`
 
 case "$(uname -s)" in
    Darwin)
+     MD5=md5
      SQLCIPHER="./prebuilts/mac/sqlcipher"
      export DYLD_LIBRARY_PATH=./prebuilts/mac/
      ;;
    Linux)
+     MD5=md5sum
      SQLCIPHER="./prebuilts/linux/sqlcipher"
      export LD_LIBRARY_PATH=./prebuilts/linux/
      ;;
@@ -23,6 +24,7 @@ case "$(uname -s)" in
      ;;
 esac
 
+KEY=`basename $DB_NAME | grep -o '^[^.]\+' | tr -d '_\n' | $MD5 | cut -b 1-7`
 $SQLCIPHER $DB_NAME << EOF
   PRAGMA key='$KEY';
   PRAGMA cipher_use_hmac = off;

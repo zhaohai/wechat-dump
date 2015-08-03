@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 UIN"
+  exit
+fi
+
+IMEI=`adb shell dumpsys iphonesubinfo | grep 'Device ID' | grep -o '[0-9]\+'`
+
+USER_ID=$1
+USER_PATH=`md5 -qs mm$USER_ID`
+
+adb wait-for-device
+adb shell su -c "cp /data/data/com.tencent.mm/MicroMsg/$USER_PATH/EnMicroMsg.db /data/local/tmp"
+adb shell su -c "chown shell:shell /data/local/tmp/EnMicroMsg.db"
+adb pull /data/local/tmp/EnMicroMsg.db "${IMEI}_${USER_ID}.db"

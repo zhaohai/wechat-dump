@@ -1,19 +1,22 @@
+Wechat Database Dumper
+======================
+
 How to use
 ----------
 - Get the wechat UIN by logging in http://web.wechat.com/ and inspect `wxuin`
-  cookie record under the domain of wx2.qq.com
+  cookie record under the domain of `wx2.qq.com`.
 
 - Dump encrypted wechat database from phone/emulator:
 
-    ./dump_message 944818938
+    `./dump_message 944818938`
 
 - Decrypt the database:
 
-    ./decrypt_db 867323021476294_944818938.db output.db
+    `./decrypt_db 867323021476294_944818938.db output.db`
 
 - Play with the decrypted sqlite database, for example:
 
-    echo "select content from message;" | sqlite3 output.db
+    `echo "select content from message;" | sqlite3 output.db`
 
 
 Building `sqlciphier`
